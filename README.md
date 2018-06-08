@@ -6,7 +6,12 @@ npm install
 ```
 ### Setup
 ---
-Create images directory with the following sub foldering 1600, 1000, 800, 600
+Create images directory with the following sub folders 1600, 1000, 800, 600.
+- images
+  - 1600
+  - 1000
+  - 800
+  - 600
 ### Settings
 ---
 Change the url to scrape and freqency.
