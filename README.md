@@ -4,7 +4,6 @@ I got my inspiration from https://github.com/typicode/tlapse.
 ---
 ```
 npm install
-node capture.js
 ```
 ### Setup
 ---
@@ -14,6 +13,11 @@ Create images directory with the following sub folders 1600, 1000, 800, 600.
   - 1000
   - 800
   - 600
+### Startup
+---
+```
+node capture.js
+```
  
 ### Settings
 ---
