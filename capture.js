@@ -1,3 +1,4 @@
+const fs = require('fs');
 const puppeteer = require('puppeteer');
 const ms = require('ms');
 const inquirer = require('inquirer');
@@ -6,9 +7,30 @@ const inquirer = require('inquirer');
 let time = '1hr';
 let url = 'https://amvac-chemical-andy.devsr.com/';
 
+if(!fs.existsSync('./images')) {
+  fs.mkdirSync('./images');
+  fs.mkdirSync('./images/600');
+  fs.mkdirSync('./images/800');
+  fs.mkdirSync('./images/1000');
+  fs.mkdirSync('./images/1600');
+}
+
+async function run() {
+  try {
+    let data = await askQuestions();
+    data = JSON.parse(data);
+    time = data.time;
+    url = data.url;
+    await captureScreenshots();
+    setInterval(captureScreenshots, ms(time));
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+// CMD promt question
 function askQuestions() {
-  const questions = [
-    {
+  const questions = [{
       type: 'input',
       name: 'url',
       message: 'What is the url?',
@@ -32,19 +54,7 @@ function askQuestions() {
   return data;
 }
 
-async function run() {
-  try {
-    let data = await askQuestions();
-    data = JSON.parse(data);
-    time = data.time;
-    url = data.url;
-    await captureScreenshots();
-    setInterval(captureScreenshots, ms(time));
-  } catch (e) {
-    console.log(e);
-  }
-}
-
+// Create Screen Shots
 const captureScreenshots = async () => {
   let viewports = [1600, 1000, 800, 600];
   let browser = await puppeteer.launch();
