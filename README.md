@@ -5,14 +5,7 @@ I got my inspiration from https://github.com/typicode/tlapse.
 ```
 npm install
 ```
-### Setup
----
-Create images directory with the following sub folders 1600, 1000, 800, 600.
-- images
-  - 1600
-  - 1000
-  - 800
-  - 600
+
 ### Startup
 ---
 ```
@@ -21,7 +14,7 @@ node capture.js
  
 ### Settings
 ---
-Change the url to scrape and set interval time.
+Change the url to take a screen shot and set interval time between sreenshots.
 Example of prompt when node capture.js is ran.
 ```
 What is the url? https://amvac-chemical-andy.devsr.com/
