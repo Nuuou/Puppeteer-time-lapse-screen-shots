@@ -2,22 +2,22 @@ const fs = require('fs');
 const puppeteer = require('puppeteer');
 const ms = require('ms');
 const inquirer = require('inquirer');
+const moment = require('moment');
 
 // Default Settings.
-let time = '1hr';
-let url = 'https://amvac-chemical-andy.devsr.com/';
+let frequency = 'now';
+let url = 'http://amvac-chemical-screenshot.devsr.com';
+const viewports = [1600, 1000, 800, 600];
+const dateNow = moment().format('YYYY-MM-DD--HH-mm-ss');
 
 if (!fs.existsSync('./images')) {
   fs.mkdirSync('./images');
-  fs.mkdirSync('./images/600');
-  fs.mkdirSync('./images/800');
-  fs.mkdirSync('./images/1000');
-  fs.mkdirSync('./images/1600');
 }
+
+fs.mkdirSync(`./images/${dateNow}`);
 
 // Create Screen Shots
 const captureScreenshots = async () => {
-  const viewports = [1600, 1000, 800, 600];
   const browser = await puppeteer.launch();
   const page = await browser.newPage();
   await page.setCacheEnabled(false);
@@ -35,7 +35,7 @@ const captureScreenshots = async () => {
 
     /* eslint-disable-next-line no-await-in-loop */
     await page.screenshot({
-      path: `images/${vw}/screen-${vw}-${Date.now()}.png`,
+      path: `images/${dateNow}/${vw}--fullscreen.png`,
       fullPage: true,
     });
   }
@@ -45,11 +45,12 @@ const captureScreenshots = async () => {
 
 async function run() {
   try {
-    let data = await askQuestions();
-    data = JSON.parse(data);
-    [time, url] = data;
+    const data = await askQuestions();
+    ({ frequency, url } = data);
     await captureScreenshots();
-    setInterval(captureScreenshots, ms(time));
+    if (frequency !== 'now') {
+      setInterval(captureScreenshots, ms(frequency));
+    }
   } catch (e) {
     // TODO: Better error handling.
   }
@@ -66,13 +67,13 @@ function askQuestions() {
     },
     {
       type: 'input',
-      name: 'time',
-      message: 'How often do you want to take screen shots?',
-      default: time,
+      name: 'frequency',
+      message: 'How often do you want to take screen shots? Use "now" for single screenshot.',
+      default: frequency,
     },
   ];
 
-  const data = inquirer.prompt(questions).then(answers => JSON.stringify(answers));
+  const data = inquirer.prompt(questions).then(answers => answers);
   return data;
 }
 
