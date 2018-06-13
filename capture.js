@@ -7,7 +7,7 @@ const inquirer = require('inquirer');
 let time = '1hr';
 let url = 'https://amvac-chemical-andy.devsr.com/';
 
-if(!fs.existsSync('./images')) {
+if (!fs.existsSync('./images')) {
   fs.mkdirSync('./images');
   fs.mkdirSync('./images/600');
   fs.mkdirSync('./images/800');
@@ -15,68 +15,65 @@ if(!fs.existsSync('./images')) {
   fs.mkdirSync('./images/1600');
 }
 
+// Create Screen Shots
+const captureScreenshots = async () => {
+  const viewports = [1600, 1000, 800, 600];
+  const browser = await puppeteer.launch();
+  const page = await browser.newPage();
+  await page.setCacheEnabled(false);
+  await page.goto(url);
+
+  for (let i = 0; i < viewports.length; i++) {
+    const vw = viewports[i];
+
+    // The height doesn't matter since we are screenshotting the full page.
+    /* eslint-disable-next-line no-await-in-loop */
+    await page.setViewport({
+      width: vw,
+      height: 900,
+    });
+
+    /* eslint-disable-next-line no-await-in-loop */
+    await page.screenshot({
+      path: `images/${vw}/screen-${vw}-${Date.now()}.png`,
+      fullPage: true,
+    });
+  }
+
+  await browser.close();
+};
+
 async function run() {
   try {
     let data = await askQuestions();
     data = JSON.parse(data);
-    time = data.time;
-    url = data.url;
+    [time, url] = data;
     await captureScreenshots();
     setInterval(captureScreenshots, ms(time));
   } catch (e) {
-    console.log(e);
+    // TODO: Better error handling.
   }
 }
 
-// CMD promt question
+// CMD prompt question
 function askQuestions() {
-  const questions = [{
+  const questions = [
+    {
       type: 'input',
       name: 'url',
       message: 'What is the url?',
-      default: function () {
-        return url;
-      }
+      default: url,
     },
     {
       type: 'input',
       name: 'time',
       message: 'How often do you want to take screen shots?',
-      default: function () {
-        return time;
-      }
-    }
-  ]
+      default: time,
+    },
+  ];
 
-  let data = inquirer.prompt(questions).then(answers => {
-    return JSON.stringify(answers);
-  });
+  const data = inquirer.prompt(questions).then(answers => JSON.stringify(answers));
   return data;
 }
 
-// Create Screen Shots
-const captureScreenshots = async () => {
-  let viewports = [1600, 1000, 800, 600];
-  let browser = await puppeteer.launch();
-  let page = await browser.newPage();
-  await page.setCacheEnabled(false);
-  await page.goto(url);
-
-  for (let i = 0; i < viewports.length; i++) {
-    let vw = viewports[i];
-
-    // The height doesn't matter since we are screenshotting the full page.
-    await page.setViewport({
-      width: vw,
-      height: 1000
-    });
-
-    await page.screenshot({
-      path: `images/${vw}/screen-${vw}-${Date.now()}.png`,
-      fullPage: true
-    });
-  }
-
-  await browser.close()
-}
 run();
