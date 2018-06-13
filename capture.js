@@ -10,6 +10,7 @@ let url = 'http://amvac-chemical-screenshot.devsr.com';
 const viewports = [1600, 1000, 800, 600];
 const dateNow = moment().format('YYYY-MM-DD--HH-mm-ss');
 
+// Make default date directory.
 if (!fs.existsSync('./images')) {
   fs.mkdirSync('./images');
 }
@@ -22,6 +23,12 @@ const captureScreenshots = async () => {
   const page = await browser.newPage();
   await page.setCacheEnabled(false);
   await page.goto(url);
+
+  // Make new date directory.
+  const dateNowUpdated = moment().format('YYYY-MM-DD--HH-mm-ss');
+  if (!fs.existsSync(`./images/${dateNowUpdated}`)) {
+    fs.mkdirSync(`./images/${dateNowUpdated}`);
+  }
 
   for (let i = 0; i < viewports.length; i++) {
     const vw = viewports[i];
