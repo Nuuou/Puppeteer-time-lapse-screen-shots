@@ -39,10 +39,25 @@ const captureScreenshots = async () => {
     });
 
     /* eslint-disable-next-line no-await-in-loop */
+    const bodyHandle = await page.$('body');
+
+    /* eslint-disable-next-line no-await-in-loop */
+    const { width, height } = await bodyHandle.boundingBox();
+
+    /* Replace fullPage implementation with custom selector based on body: https://github.com/GoogleChrome/puppeteer/issues/703#issuecomment-366041479 */
+    /* eslint-disable-next-line no-await-in-loop */
     await page.screenshot({
       path: `images/${dateNow}/${vw}--fullscreen.png`,
-      fullPage: true,
+      clip: {
+        x: 0,
+        y: 0,
+        width,
+        height,
+      },
     });
+
+    /* eslint-disable-next-line no-await-in-loop */
+    await bodyHandle.dispose();
   }
 
   await browser.close();
