@@ -14,6 +14,12 @@ let dateNow = moment().format('YYYY-MM-DD--HH-mm-ss');
 if (!fs.existsSync('./images')) {
   fs.mkdirSync('./images');
 }
+if (!fs.existsSync('./images/bydate')) {
+  fs.mkdirSync('./images/bydate');
+}
+if (!fs.existsSync('./images/bysize')) {
+  fs.mkdirSync('./images/bysize');
+}
 
 // Create Screen Shots
 const captureScreenshots = async () => {
@@ -24,12 +30,16 @@ const captureScreenshots = async () => {
 
   // Make new date directory.
   dateNow = moment().format('YYYY-MM-DD--HH-mm-ss');
-  if (!fs.existsSync(`./images/${dateNow}`)) {
-    fs.mkdirSync(`./images/${dateNow}`);
+  if (!fs.existsSync(`./images/bydate/${dateNow}`)) {
+    fs.mkdirSync(`./images/bydate/${dateNow}`);
   }
 
   for (let i = 0; i < viewports.length; i++) {
     const vw = viewports[i];
+
+    if (!fs.existsSync(`./images/bysize/${vw}`)) {
+      fs.mkdirSync(`./images/bysize/${vw}`);
+    }
 
     // The height doesn't matter since we are screenshotting the full page.
     /* eslint-disable-next-line no-await-in-loop */
@@ -47,7 +57,18 @@ const captureScreenshots = async () => {
     /* Replace fullPage implementation with custom selector based on body: https://github.com/GoogleChrome/puppeteer/issues/703#issuecomment-366041479 */
     /* eslint-disable-next-line no-await-in-loop */
     await page.screenshot({
-      path: `images/${dateNow}/${vw}--fullscreen.png`,
+      path: `images/bydate/${dateNow}/${vw}--fullscreen.png`,
+      clip: {
+        x: 0,
+        y: 0,
+        width,
+        height,
+      },
+    });
+
+    /* eslint-disable-next-line no-await-in-loop */
+    await page.screenshot({
+      path: `images/bysize/${vw}/${dateNow}--fullscreen.png`,
       clip: {
         x: 0,
         y: 0,
